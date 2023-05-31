@@ -54,7 +54,7 @@ var watchCmd = &cobra.Command{
 		c := make(chan *moddwatch.Mod, 1)
 
 		paths := []string{
-			"/...",
+			"**",
 		}
 
 		watch, err := moddwatch.Watch(source, paths, nil, 300*time.Millisecond, c)
@@ -66,19 +66,19 @@ var watchCmd = &cobra.Command{
 		for {
 			files := <-c
 			for a := 0; a < len(files.Added); a++ {
-				file := files.Added[a]
+				file := source + "/" + files.Added[a]
 				if isValidFile(file) {
 					fileChanged(build.CreateFile(file, convertToTargetPath(file)), false)
 				}
 			}
 			for c := 0; c < len(files.Changed); c++ {
-				file := files.Changed[c]
+				file := source + "/" + files.Changed[c]
 				if isValidFile(file) {
 					fileChanged(build.CreateFile(file, convertToTargetPath(file)), false)
 				}
 			}
 			for d := 0; d < len(files.Deleted); d++ {
-				file := files.Deleted[d]
+				file := source + "/" + files.Deleted[d]
 				if isValidFile(file) {
 					fileChanged(build.CreateFile(file, convertToTargetPath(file)), true)
 				}
